@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Calculadora de matrices avanzada y responsiva con operaciones matemáticas.">
+    <title>Calculadora de Matrices Avanzada</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+    body {
+        background: linear-gradient(135deg, #1f1c2c, #928dab);
+        font-family: 'Poppins', sans-serif;
+        color: #ffffff;
+        margin: 0;
+        padding: 0;
+    }
+    
+    .container {
+        max-width: 1200px;
+        margin: 40px auto;
+        padding: 30px;
+        background-color: rgba(0, 0, 0, 0.7);
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(10px);
+    }
+    
+    h1 {
+        color: #00d9ff;
+        text-transform: uppercase;
+        text-align: center;
+        font-size: 2.5em;
+        margin-bottom: 40px;
+        letter-spacing: 2px;
+        background: -webkit-linear-gradient(45deg, #00d9ff, #ff6ec4);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    
+    .matrix-container {
+        margin-top: 20px;
+        overflow-x: auto;
+        padding: 20px;
+        background-color: rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    .matrix-grid {
+        display: grid;
+        gap: 10px;
+    }
+    
+    .matrix-input, .matrix-result {
+        width: 60px;
+        height: 60px;
+        text-align: center;
+        font-size: 1.2em;
+        border: 2px solid #00d9ff;
+        border-radius: 12px;
+        background-color: rgba(255, 255, 255, 0.1);
+        color: #ffffff;
+        transition: all 0.3s ease;
+    }
+    
+    .matrix-input:focus {
+        border-color: #ff6ec4;
+        box-shadow: 0 0 10px #ff6ec4;
+    }
+    
+    .matrix-result {
+        background-color: rgba(0, 217, 255, 0.1);
+        border-color: #00d9ff;
+        color: #00d9ff;
+        font-weight: bold;
+    }
+    
+    .btn {
+        margin-top: 30px;
+        padding: 15px 25px;
+        font-size: 1.2em;
+        border: none;
+        border-radius: 50px;
+        background-image: linear-gradient(45deg, #00d9ff, #ff6ec4);
+        color: #ffffff;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    
+    .btn:hover {
+        box-shadow: 0 8px 20px rgba(0, 217, 255, 0.5);
+    }
+    
+    .result {
+        margin-top: 40px;
+        padding: 25px;
+        background-color: rgba(0, 217, 255, 0.05);
+        border-radius: 15px;
+        box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+    
+    .steps {
+        margin-top: 20px;
+        padding: 20px;
+        background-color: rgba(255, 255, 255, 0.05);
+        color: #ffffff;
+        font-size: 1em;
+        border-left: 5px solid #ff6ec4;
+        border-radius: 10px;
+    }
+    
+    .error-message {
+        color: #ff6ec4;
+        font-weight: bold;
+        padding: 15px;
+        background-color: rgba(255, 110, 196, 0.1);
+        border-radius: 8px;
+        margin-top: 20px;
+        text-align: center;
+        box-shadow: 0 4px 15px rgba(255, 110, 196, 0.3);
+    }
+    
+    .form-group {
+        margin-bottom: 30px;
+        color: #ffffff;
+    }
+    
+    select.form-control {
+        background-color: rgba(255, 255, 255, 0.1);
+        border: 2px solid #00d9ff;
+        color: #ffffff;
+        padding: 10px;
+        border-radius: 12px;
+    }
+    
+    select.form-control:focus {
+        border-color: #ff6ec4;
+        box-shadow: 0 0 10px #ff6ec4;
+    }
+    
+    @media (max-width: 768px) {
+        .container {
+            padding: 15px;
+        }
+        .matrix-input, .matrix-result {
+            width: 50px;
+            height: 50px;
+            font-size: 1em;
+        }
+        .btn {
+            font-size: 1em;
+            padding: 10px 20px;
+        }
+    }
+</style>
+    </head>
+<body>
+    <div class="container">
+        <h1>Calculadora de Matrices Avanzada</h1>
+        <div class="row">
+            <div class="col-md-12">
+                <form id="matrixForm">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="matrixSizeA">Dimensión de la matriz A:</label>
+                                <div class="d-flex">
+                                    <input type="number" class="form-control me-2" id="rowsA" min="1" max="10" value="3" placeholder="Filas">
+                                    <input type="number" class="form-control" id="colsA" min="1" max="10" value="3" placeholder="Columnas">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="matrixSizeB">Dimensión de la matriz B:</label>
+                                <div class="d-flex">
+                                    <input type="number" class="form-control me-2" id="rowsB" min="1" max="10" value="3" placeholder="Filas">
+                                    <input type="number" class="form-control" id="colsB" min="1" max="10" value="3" placeholder="Columnas">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="operation">Operación:</label>
+                                <select class="form-control" id="operation">
+                                    <option value="sumar">Suma</option>
+                                    <option value="restar">Resta</option>
+                                    <option value="multiplicar">Multiplicación</option>
+                                    <option value="dividir">División (elemento a elemento)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="matrix-container">
+                                <h4>Matriz A:</h4>
+                                <div id="matrixAContainer" class="matrix-grid"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="matrix-container">
+                                <h4>Matriz B:</h4>
+                                <div id="matrixBContainer" class="matrix-grid"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-12 text-center">
+                            <button type="button" class="btn btn-primary me-2" id="calculateBtn">Calcular</button>
+                            <button type="button" class="btn btn-secondary" id="clearBtn">Limpiar</button>
+                        </div>
+                    </div>
+                </form>
+                <div id="errorMessage" class="error-message mt-3" style="display: none;"></div>
+                <div class="result" id="resultContainer" style="display: none;">
+                    <h4>Resultado:</h4>
+                    <div class="matrix-container">
+                        <div id="resultMatrix" class="matrix-grid"></div>
+                    </div>
+                    <div class="steps mt-4" id="calculationSteps"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const rowsAInput = document.getElementById('rowsA');
+            const colsAInput = document.getElementById('colsA');
+            const rowsBInput = document.getElementById('rowsB');
+            const colsBInput = document.getElementById('colsB');
+            const matrixAContainer = document.getElementById('matrixAContainer');
+            const matrixBContainer = document.getElementById('matrixBContainer');
+            const resultMatrix = document.getElementById('resultMatrix');
+            const calculationSteps = document.getElementById('calculationSteps');
+            const errorMessage = document.getElementById('errorMessage');
+            const calculateBtn = document.getElementById('calculateBtn');
+            const clearBtn = document.getElementById('clearBtn');
+            const resultContainer = document.getElementById('resultContainer');
+
+            function createMatrixInputs(container, rows, cols, matrixName) {
+                container.innerHTML = '';
+                container.style.gridTemplateColumns = `repeat(${cols}, auto)`;
+                for (let i = 0; i < rows; i++) {
+                    for (let j = 0; j < cols; j++) {
+                        let input = document.createElement('input');
+                        input.type = 'number';
+                        input.step = 'any';
+                        input.classList.add('matrix-input');
+                        input.id = `${matrixName}_${i}_${j}`;
+                        input.placeholder = `${matrixName}${i+1}${j+1}`;
+                        container.appendChild(input);
+                    }
+                }
+            }
+
+            function updateMatrices() {
+                let rowsA = parseInt(rowsAInput.value);
+                let colsA = parseInt(colsAInput.value);
+                let rowsB = parseInt(rowsBInput.value);
+                let colsB = parseInt(colsBInput.value);
+
+                createMatrixInputs(matrixAContainer, rowsA, colsA, 'A');
+                createMatrixInputs(matrixBContainer, rowsB, colsB, 'B');
+            }
+
+            function displayError(message) {
+                errorMessage.textContent = message;
+                errorMessage.style.display = 'block';
+                resultContainer.style.display = 'none';
+            }
+
+            function clearError() {
+                errorMessage.textContent = '';
+                errorMessage.style.display = 'none';
+            }
+
+            function getMatrixValues(matrixName, rows, cols) {
+                let matrix = [];
+                for (let i = 0; i < rows; i++) {
+                    let row = [];
+                    for (let j = 0; j < cols; j++) {
+                        let input = document.getElementById(`${matrixName}_${i}_${j}`);
+                        let value = parseFloat(input.value);
+                        if (isNaN(value)) {
+                            throw new Error(`Por favor ingresa un número válido en la posición ${i + 1}, ${j + 1} de la matriz ${matrixName}`);
+                        }
+                        row.push(value);
+                    }
+                    matrix.push(row);
+                }
+                return matrix;
+            }
+
+            function calculateMatrixOperation() {
+                clearError();
+
+                let rowsA = parseInt(rowsAInput.value);
+                let colsA = parseInt(colsAInput.value);
+                let rowsB = parseInt(rowsBInput.value);
+                let colsB = parseInt(colsBInput.value);
+                let operation = document.getElementById('operation').value;
+
+                try {
+                    let matrixA = getMatrixValues('A', rowsA, colsA);
+                    let matrixB = getMatrixValues('B', rowsB, colsB);
+
+                    let result = [];
+                    let steps = '';
+
+                    if (operation === 'sumar' || operation === 'restar') {
+                        if (rowsA !== rowsB || colsA !== colsB) {
+                            throw new Error('Las dimensiones de las matrices deben ser iguales para sumar o restar.');
+                        }
+
+                        for (let i = 0; i < rowsA; i++) {
+                            let resultRow = [];
+                            for (let j = 0; j < colsA; j++) {
+                                let step;
+                                if (operation === 'sumar') {
+                                    step = `${matrixA[i][j]} + ${matrixB[i][j]}`;
+                                    resultRow.push(matrixA[i][j] + matrixB[i][j]);
+                                } else {
+                                    step = `${matrixA[i][j]} - ${matrixB[i][j]}`;
+                                    resultRow.push(matrixA[i][j] - matrixB[i][j]);
+                                }
+                                steps += `${step} = ${resultRow[j]}<br>`;
+                            }
+                            result.push(resultRow);
+                        }
+                    } else if (operation === 'multiplicar') {
+                        if (colsA !== rowsB) {
+                            throw new Error('El número de columnas de A debe ser igual al número de filas de B para multiplicar.');
+                        }
+
+                        for (let i = 0; i < rowsA; i++) {
+                            let resultRow = [];
+                            for (let j = 0; j < colsB; j++) {
+                                let sum = 0;
+                                let step = '';
+                                for (let k = 0; k < colsA; k++) {
+                                    sum += matrixA[i][k] * matrixB[k][j];
+                                    step += `${matrixA[i][k]} * ${matrixB[k][j]} + `;
+                                }
+                                step = step.slice(0, -2);
+                                resultRow.push(sum);
+                                steps += `${step} = ${sum}<br>`;
+                            }
+                            result.push(resultRow);
+                        }
+                    } else if (operation === 'dividir') {
+                        if (rowsA !== rowsB || colsA !== colsB) {
+                            throw new Error('Las dimensiones de las matrices deben ser iguales para la división.');
+                        }
+
+                        for (let i = 0; i < rowsA; i++) {
+                            let resultRow = [];
+                            for (let j = 0; j < colsA; j++) {
+                                if (matrixB[i][j] === 0) {
+                                    throw new Error('No se puede dividir por cero en la posición ' + (i + 1) + ', ' + (j + 1));
+                                }
+                                resultRow.push(matrixA[i][j] / matrixB[i][j]);
+                                steps += `${matrixA[i][j]} ÷ ${matrixB[i][j]} = ${resultRow[j]}<br>`;
+                            }
+                            result.push(resultRow);
+                        }
+                    }
+
+                    displayResult(result, steps);
+                } catch (error) {
+                    displayError(error.message);
+                }
+            }
+
+            function displayResult(result, steps) {
+                resultMatrix.innerHTML = '';
+                resultMatrix.style.gridTemplateColumns = `repeat(${result[0].length}, auto)`;
+
+                result.forEach(row => {
+                    row.forEach(value => {
+                        let resultCell = document.createElement('div');
+                        resultCell.classList.add('matrix-result');
+                        resultCell.textContent = value;
+                        resultMatrix.appendChild(resultCell);
+                    });
+                });
+
+                calculationSteps.innerHTML = steps;
+                resultContainer.style.display = 'block';
+            }
+
+            calculateBtn.addEventListener('click', calculateMatrixOperation);
+            clearBtn.addEventListener('click', function () {
+                matrixAContainer.innerHTML = '';
+                matrixBContainer.innerHTML = '';
+                resultMatrix.innerHTML = '';
+                rowsAInput.value = '3';
+                colsAInput.value = '3';
+                rowsBInput.value = '3';
+                colsBInput.value = '3';
+                resultContainer.style.display = 'none';
+                clearError();
+                updateMatrices();
+            });
+
+            rowsAInput.addEventListener('change', updateMatrices);
+            colsAInput.addEventListener('change', updateMatrices);
+            rowsBInput.addEventListener('change', updateMatrices);
+            colsBInput.addEventListener('change', updateMatrices);
+
+            updateMatrices(); // Inicializar con matrices 3x3
+        });
+    </script>
+</body>
+</html>
